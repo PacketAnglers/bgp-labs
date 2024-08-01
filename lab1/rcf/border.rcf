@@ -1,0 +1,4 @@
+function AS500_IN_IPV4() {
+    as_path.remove( { 100, 200 } );
+    return true;
+}
