@@ -1,0 +1,78 @@
+---
+# --------------------------------------------------------------
+# BGP Lab 1
+# --------------------------------------------------------------
+
+name: bgp-lab1
+
+prefix: ""
+
+mgmt:
+  network: mgmt
+  ipv4-subnet: 172.100.100.0/24
+
+topology:
+
+  defaults:
+    env:
+      INTFTYPE: et
+
+  kinds:
+    ceos:
+      image: ceos:latest
+      memory: 4g
+    linux:
+      image: mitchv85/devhost:24.04
+
+  nodes:
+
+    INET-FW:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.101
+      startup-config: ./configs/INET-FW.cfg
+      ports:
+        - '22001:22'
+        - '8001:80'
+        - '44301:443'
+
+    EDGE:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.102
+      startup-config: ./configs/EDGE.cfg
+      ports:
+        - '22002:22'
+        - '8002:80'
+        - '44302:443'
+
+    CORE:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.103
+      startup-config: ./configs/CORE.cfg
+      ports:
+        - '22003:22'
+        - '8003:80'
+        - '44303:443'
+
+    BORDER:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.104
+      startup-config: ./configs/BORDER.cfg
+      ports:
+        - '22004:22'
+        - '8004:80'
+        - '44304:443'
+
+    DC-FW:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.105
+      startup-config: ./configs/DC-FW.cfg
+      ports:
+        - '22005:22'
+        - '8005:80'
+        - '44305:443'
+
+  links:
+    - endpoints: ["INET-FW:et1", "EDGE:et1"]
+    - endpoints: ["EDGE:et2", "CORE:et2"]
+    - endpoints: ["CORE:et1", "BORDER:et1"]
+    - endpoints: ["BORDER:et2", "DC-FW:et2"]
